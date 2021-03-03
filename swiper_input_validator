@@ -1,0 +1,37 @@
+function verifySlideInput(inputs){
+
+			inputs.each(function(){
+				var self = $(this)
+				var val = self.val(); 
+				var parent = self.closest('.box-input');
+				
+				if( val == '' || val == null || val == undefined ){
+					parent.addClass('error');
+				} else {
+					parent.removeClass('error');
+				}
+
+				if( val != '' && self.hasClass('mask-cnpj')){
+					if(validarCnpj(val)){
+						parent.removeClass('error');
+					} else {
+						parent.addClass('error');
+					}
+				}
+
+				if( val != '' && self.is("#input-email")){
+
+					if(validarEmail(val)){
+						parent.removeClass('error');
+					} else {
+						parent.addClass('error');
+					}
+				}
+			});
+
+			if( $('.swiper-slide-active .box-input').hasClass('error') ){
+				return false;
+			} else {
+				return true;
+			}
+		}
