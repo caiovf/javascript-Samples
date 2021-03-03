@@ -1,0 +1,39 @@
+function ajaxPosts(type,page){
+	let bt = jQuery("[data-ajax="+type+"]");
+	let container = jQuery("[data-container="+type+"]");
+	let load = jQuery('.load')
+	let noResult = jQuery('.no-result');
+	
+	load.addClass('active');
+	bt.css('pointer-events','none');
+
+	jQuery.ajax(`${theme_object.theme_url}/ajax/${type}.php`,{
+		type: 'POST',
+		data: jQuery('[data-form="ajax"]').serialize()+`&page=${page}`,
+		success: function(data) {
+			let responseAjax = JSON.parse(data);
+			let postsRestricted = responseAjax.posts;
+			let totalPosts = responseAjax.count;
+			page++;
+			
+			container.append(postsRestricted);
+			currentPosts = container.find('.item-list').length;
+			
+			if(totalPosts == currentPosts || totalPosts < 10){		
+				bt.slideUp();
+			} else {
+				bt.slideDown();
+			}
+
+			if(totalPosts == 0 && postsRestricted == null){		
+				noResult.slideDown();				
+			} else {
+				noResult.slideUp();				
+			}
+
+			bt.data('page',page);
+			load.removeClass('active');
+			bt.css('pointer-events','auto');
+		},
+	});
+}
