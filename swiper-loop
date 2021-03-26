@@ -1,0 +1,22 @@
+var _slides_video = {};
+var sliderSection = document.querySelectorAll('.section-gallery-video');
+
+Array.from(sliderSection).forEach( function(element, index){
+
+  var slideSectionContainer = element.querySelector('.swiper-container');
+  var slideSectionNext = element.querySelector('.swiper-button-next');
+  var slideSectionPrev = element.querySelector('.swiper-button-prev');
+  var slideSectionPagination = element.querySelector('.swiper-pagination');
+
+  _slides_video[index] = new Swiper(slideSectionContainer, {
+    watchOverflow: true,
+    pagination: {
+      el: slideSectionPagination,
+      clickable: true,
+    },
+    navigation: {
+      nextEl: slideSectionNext,
+      prevEl: slideSectionPrev,
+    },
+  });
+});
