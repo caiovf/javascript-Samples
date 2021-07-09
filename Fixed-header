@@ -1,0 +1,20 @@
+function fixedheader() {
+	var windowWidth = window.innerWidth;
+	var windowHeight = window.innerHeight / 2;			
+
+	if(windowWidth > 1200) {
+		let header =  jQuery('.layout-header');
+
+		if ( window.pageYOffset > windowHeight ) {
+			
+			header.addClass('fixed');						
+		} else {
+
+			header.removeClass('fixed');
+		}
+	}
+}
+
+window.addEventListener("scroll",function(){
+    fixedheader();
+},{ passive: true});
