@@ -1,34 +1,44 @@
-function ajaxPosts(type,page){
-	let bt = jQuery("[data-ajax="+type+"]");
-	let container = jQuery("[data-container="+type+"]");
-	let load = jQuery('.load')
-	let noResult = jQuery('.no-result');
+function ajaxPosts({type,page=2,perPage=12}){
+	const bt = jQuery(`[data-ajax="${type}"]`);
+	const container = jQuery(`[data-container="${type}"]`);
+	const filter = jQuery(`[data-form="${type}"]`);
+	const load = jQuery('.load');
+	const noResult = jQuery('.no-result');
+	let data = {
+		'page' : page
+	};
+	
+	if( filter.length > 0 ){
+		data = filter.serialize()+'&'+$.param(data);
+	}
 	
 	load.addClass('active');
 	bt.css('pointer-events','none');
 
-	jQuery.ajax(`${theme_object.theme_url}/ajax/${type}.php`,{
-		type: 'POST',
-		data: jQuery('[data-form="ajax"]').serialize()+`&page=${page}`,
+	jQuery.ajax(`ajax/${type}.php`,{
+		type: 'GET',
+		dataType: "json",
+		data: data,
 		success: function(data) {
-			let responseAjax = JSON.parse(data);
-			let postsRestricted = responseAjax.posts;
-			let totalPosts = responseAjax.count;
+			const posts = data.posts;			
+			const totalPosts = data.count;			
 			page++;
 			
-			container.append(postsRestricted);
-			currentPosts = container.find('.item-list').length;
+			container.append(posts);
+			currentPosts = container.find('article').length;
 			
-			if(totalPosts == currentPosts || totalPosts < 10){		
+			if(totalPosts == currentPosts || totalPosts < perPage){		
 				bt.slideUp();
 			} else {
 				bt.slideDown();
 			}
 
-			if(totalPosts == 0 && postsRestricted == null){		
-				noResult.slideDown();				
+			if(totalPosts == 0 && posts == null){		
+				noResult.slideDown();
+				container.slideUp();
 			} else {
 				noResult.slideUp();				
+				container.slideDown();
 			}
 
 			bt.data('page',page);
