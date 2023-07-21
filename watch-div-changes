@@ -1,0 +1,13 @@
+const onChangeElement = (qSelector, cb)=>{
+	const targetNode = document.querySelector(qSelector);
+	if(targetNode){
+	   const config = { attributes: true, childList: false, subtree: false };
+	   const callback = function(mutationsList, observer) {
+		   cb(jQuery(qSelector))
+	   };
+	   const observer = new MutationObserver(callback);
+	   observer.observe(targetNode, config);
+	}else {
+	   console.error("onChangeElement: nada encontrado")
+	}
+}
