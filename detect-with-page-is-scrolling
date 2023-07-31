@@ -1,0 +1,25 @@
+let isScrolling = false; //Saber se o scroll ta acontecendo ou não
+let scrollTimeout; // variavel para cancelar o settimeout
+
+function handleScrollStart() { //chamada do scroll
+  if (!isScrolling) {
+    isScrolling = true;
+    // esta acontecendo  o scroll
+  }
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(function() {
+    handleScrollStop();
+  }, 100);
+}
+
+function handleScrollStop() {
+  isScrolling = false;
+  // scroll parou
+}
+
+// retorna valor atualizado da variavel
+$.fn.isScrolling = function() {
+  return isScrolling;
+};
+
+window.addEventListener("scroll", handleScrollStart,{ passive: true});
