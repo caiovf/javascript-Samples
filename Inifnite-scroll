@@ -1,0 +1,63 @@
+var loading = false;
+var stopInfiniteScroll = false;
+
+function infiniteScroll(infiniteDiv){
+    const container = jQuery(infiniteDiv);
+    const parent = container.closest('section');
+    const containerOffsetTop = container.offset().top;
+    const containerHeight = container.height();
+    const windowScrollTop = jQuery(window).scrollTop();
+    const windowHeight = jQuery(window).height();
+    const documentHeight = jQuery(document).height();
+
+    let type = container.data('infiniteContainer');
+    let page = container.data('page');
+    let link = jQuery('[data-form]').serialize()+`&page=${page}`;
+	let pagination = 8;
+
+    if(type == 'blog'){
+        pagination = 4;
+    }
+
+    if( type == 'jobs' ){
+		pagination = 5;
+	}
+
+    if (documentHeight - (windowHeight + windowScrollTop) < documentHeight - (containerHeight + containerOffsetTop)) {
+
+        if( !loading && !stopInfiniteScroll ){
+            loading = true;
+
+            jQuery.ajax(`${theme_url}/ajax/${type}.php`,{
+                type: 'POST',
+                data: link,
+                success: function(data) {
+                    let responseAjax = JSON.parse(data);
+                    let posts = responseAjax.posts;
+                    let totalPosts = responseAjax.count;			
+                    
+                    if(type == 'works'){
+                        let items = jQuery(posts);
+                        gridWork.append( items ).packery( 'appended', items );
+                    } else {
+                        container.append(posts);
+                    }
+
+                    let currentPosts = container.find('article').length;
+        
+                    if( totalPosts == currentPosts || totalPosts < pagination ){		
+                        stopInfiniteScroll = true;
+                        parent.find('.section-footer').slideUp();
+                    } else {
+                        stopInfiniteScroll = false;
+                        parent.find('.section-footer').slideDown();
+                    }
+
+                    page++;
+                    loading = false;
+                    container.data('page',page);
+                },
+            });
+        }
+    }
+}
