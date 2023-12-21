@@ -1,4 +1,13 @@
-function ajaxPosts({type,page=2,perPage=12}){
+function ajaxPosts({type,page=2,perPage=12,customParams=''}){
+
+	function stringToObj(string) {
+		return string.split('&').reduce((obj, part) => {
+		  const [key, value] = part.split('=').map(item => decodeURIComponent(item.replace(/\+/g, ' ')));
+		  obj[key] = (value === 'true' || value === 'false') ? JSON.parse(value) : value;
+		  return obj;
+		}, {});
+	}
+
 	const bt = jQuery(`[data-ajax="${type}"]`);
 	const container = jQuery(`[data-container="${type}"]`);
 	const filter = jQuery(`[data-form="${type}"]`);
@@ -7,15 +16,19 @@ function ajaxPosts({type,page=2,perPage=12}){
 	let data = {
 		'page' : page
 	};
-	
+
 	if( filter.length > 0 ){
-		data = filter.serialize()+'&'+$.param(data);
+		Object.assign(data, stringToObj(filter.serialize()));
 	}
+
+	if( customParams !== '' ){
+		Object.assign(data, stringToObj(customParams));
+	}	
 	
 	load.addClass('active');
 	bt.css('pointer-events','none');
 
-	jQuery.ajax(`ajax/${type}.php`,{
+	jQuery.ajax(`${theme_url}/ajax/${type}.php`,{
 		type: 'GET',
 		dataType: "json",
 		data: data,
