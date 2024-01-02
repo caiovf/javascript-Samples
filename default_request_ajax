@@ -1,4 +1,4 @@
-function ajaxPosts({type,page=2,perPage=12,customParams=''}){
+function ajaxPosts({type,page=2,perPage=12,customParams='',callback = null}){
 
 	function stringToObj(string) {
 		return string.split('&').reduce((obj, part) => {
@@ -57,6 +57,10 @@ function ajaxPosts({type,page=2,perPage=12,customParams=''}){
 			bt.data('page',page);
 			load.removeClass('active');
 			bt.css('pointer-events','auto');
+
+			if (callback && typeof callback === 'function') {
+                callback(data);
+            }
 		},
 	});
 }
